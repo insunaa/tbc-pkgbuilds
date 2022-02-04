@@ -40,6 +40,7 @@ package() {
   mv -v "$pkgdir/cmangos/bin/"* "$pkgdir/$_installdir"
   mv -v "$pkgdir/cmangos/etc/"* "$pkgdir/etc/$_pkgbase"
   rm -rf "$pkgdir/cmangos"
+  cp -r "$srcdir/$_pkgbase-core/sql" "$pkgdir/$_installdir"
   _YELLOW='\033[0;33m'
   _NC='\033[0m'
   printf "\n${_YELLOW}CMaNGOS Binaries installed to /${_installdir}\nConfig installed to /etc/${_pkgbase}\n\n"
