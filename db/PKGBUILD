@@ -20,7 +20,7 @@ pkgver() {
 
 package() {
   mkdir -p "$pkgdir/$_installdir"
-  mv "$srcdir" "$pkgdir/$_installdir"
+  mv "$srcdir/$_pkgbase/"* "$pkgdir/$_installdir"
   _YELLOW='\033[0;33m'
   _NC='\033[0m'
   printf "\n${_YELLOW}CMaNGOS Database installed to /${_installdir}\n\n"
