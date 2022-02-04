@@ -11,6 +11,7 @@ depends=(mariadb boost)
 makedepends=(git cmake mariadb-libs boost-libs clang)
 provides=(cmangos-tbc)
 _installdir="opt/$_pkgbase"
+backup=("etc/$_pkgbase/mangosd.conf" "etc/$_pkgbase/realmd.conf" "etc/$_pkgbase/anticheat.conf")
 source=("$_pkgbase-core::git+https://github.com/cmangos/mangos-tbc.git")
 sha256sums=('SKIP')
 

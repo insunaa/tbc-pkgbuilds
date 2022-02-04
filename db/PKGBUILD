@@ -10,6 +10,7 @@ depends=(mariadb boost)
 makedepends=(git)
 provides=(cmangos-tbc-db)
 _installdir="opt/$_pkgbase"
+backup=("$_installdir/dev")
 source=("$_pkgbase::git+https://github.com/cmangos/tbc-db.git"
         InstallFullDB.config)
 sha256sums=('SKIP'
