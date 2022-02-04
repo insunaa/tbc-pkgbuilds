@@ -1,0 +1,49 @@
+# Maintainer: insuna <dev.insuna@gmail.com>
+pkgname=cmangos-tbc-extractors-git
+_pkgbase=cmangos-tbc-extractors
+pkgver=12142.d34963288
+pkgrel=0
+pkgdesc="Extractor-Tools for WoW 2.4.3 Clients"
+arch=(x86_64 i686 armv7h aarch64)
+url="https://github.com/cmangos/mangos-tbc"
+license=('GPL')
+depends=(boost)
+makedepends=(git cmake boost-libs clang)
+provides=(cmangos-tbc-extractors)
+_installdir="opt/$_pkgbase"
+source=("$_pkgbase-core::git+https://github.com/cmangos/mangos-tbc.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$_pkgbase-core"
+  printf "%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "$_pkgbase-core"
+  mkdir -p build
+  cd build
+
+  cmake .. \
+    -DCMAKE_C_COMPILER=/usr/bin/clang \
+    -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+    -DPCH=OFF \
+    -DBUILD_GAME_SERVER=OFF \
+    -DBUILD_LOGIN_SERVER=OFF \
+    -DBUILD_EXTRACTORS=ON \
+    -DBUILD_SCRIPTDEV=OFF \
+    -DCMAKE_INSTALL_PREFIX=""
+  make
+}
+
+package() {
+  cd "$_pkgbase-core/build"
+  make DESTDIR="$pkgdir/cmangos" install
+  cd "$pkgdir"
+  mkdir -p "$pkgdir/$_installdir"
+  mv -v "$pkgdir/cmangos/bin/tools/"* "$pkgdir/$_installdir"
+  rm -rf "$pkgdir/cmangos"
+  _YELLOW='\033[0;33m'
+  _NC='\033[0m'
+  printf "\n${_YELLOW}CMaNGOS Extractors installed to /${_installdir}\n"
+}
