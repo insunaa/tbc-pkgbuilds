@@ -1,0 +1,31 @@
+pkgname=cmangos-classic-db-git
+_pkgbase=cmangos-classic-db
+pkgver=8077.c33f4aed
+pkgrel=0
+pkgdesc="Database for CMaNGOS 2.4.3 Server"
+arch=(x86_64 i686 armv7h aarch64)
+url="https://github.com/cmangos/classic-db"
+license=('GPL')
+depends=(mariadb boost)
+makedepends=(git)
+provides=(cmangos-classic-db)
+_installdir="opt/$_pkgbase"
+backup=("$_installdir/dev")
+source=("$_pkgbase::git+https://github.com/cmangos/classic-db.git"
+        InstallFullDB.config)
+sha256sums=('SKIP'
+            'aee1b0f025df49ce1047a0a86848640f159a8bd001bbad7f45df5fee0090db86')
+
+pkgver() {
+  cd "$_pkgbase"
+  printf "%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+  mkdir -p "$pkgdir/$_installdir"
+  mv "$srcdir/$_pkgbase/"* "$pkgdir/$_installdir"
+  cp "$srcdir/InstallFullDB.config" "$pkgdir/$_installdir/InstallFullDB.config"
+  _YELLOW='\033[0;33m'
+  _NC='\033[0m'
+  printf "\n${_YELLOW}CMaNGOS Database installed to /${_installdir}\n\n"
+}
