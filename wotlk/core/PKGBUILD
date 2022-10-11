@@ -1,0 +1,48 @@
+# Maintainer: insuna <dev.insuna@gmail.com>
+pkgname=cmangos-wotlk-git
+_pkgbase=cmangos-wotlk
+pkgver=16195.ebccc6b4d
+pkgrel=1
+pkgdesc="An emulator server for WoW 3.3.5a Clients"
+arch=(x86_64 i686 armv7h aarch64)
+url="https://github.com/cmangos/mangos-wotlk"
+license=('GPL')
+depends=(mariadb boost)
+makedepends=(git cmake mariadb-libs boost-libs clang)
+provides=(cmangos-wotlk)
+_installdir="opt/$_pkgbase"
+backup=("etc/$_pkgbase/mangosd.conf" "etc/$_pkgbase/realmd.conf" "etc/$_pkgbase/anticheat.conf")
+source=("$_pkgbase-core::git+https://github.com/cmangos/mangos-wotlk.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$_pkgbase-core"
+  printf "%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "$_pkgbase-core"
+  mkdir -p build
+  cd build
+
+  cmake .. \
+    -DCMAKE_C_COMPILER=/usr/bin/clang \
+    -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+    -DCMAKE_INSTALL_PREFIX=""
+  make
+}
+
+package() {
+  cd "$_pkgbase-core/build"
+  make DESTDIR="$pkgdir/cmangos" install
+  cd "$pkgdir"
+  mkdir -p "$pkgdir/$_installdir"
+  mkdir -p "$pkgdir/etc/$_pkgbase"
+  mv -v "$pkgdir/cmangos/bin/"* "$pkgdir/$_installdir"
+  mv -v "$pkgdir/cmangos/etc/"* "$pkgdir/etc/$_pkgbase"
+  rm -rf "$pkgdir/cmangos"
+  cp -r "$srcdir/$_pkgbase-core/sql" "$pkgdir/$_installdir"
+  _YELLOW='\033[0;33m'
+  _NC='\033[0m'
+  printf "\n${_YELLOW}CMaNGOS Binaries installed to /${_installdir}\nConfig installed to /etc/${_pkgbase}\n\n"
+}
