@@ -11,10 +11,8 @@ makedepends=(git)
 provides=(cmangos-wotlk-db)
 _installdir="opt/$_pkgbase"
 backup=("$_installdir/dev")
-source=("$_pkgbase::git+https://github.com/cmangos/wotlk-db.git"
-        InstallFullDB.config)
-sha256sums=('SKIP'
-            'aee1b0f025df49ce1047a0a86848640f159a8bd001bbad7f45df5fee0090db86')
+source=("$_pkgbase::git+https://github.com/cmangos/wotlk-db.git")
+sha256sums=('SKIP')
 
 pkgver() {
   cd "$_pkgbase"
@@ -24,7 +22,6 @@ pkgver() {
 package() {
   mkdir -p "$pkgdir/$_installdir"
   mv "$srcdir/$_pkgbase/"* "$pkgdir/$_installdir"
-  cp "$srcdir/InstallFullDB.config" "$pkgdir/$_installdir/InstallFullDB.config"
   _YELLOW='\033[0;33m'
   _NC='\033[0m'
   printf "\n${_YELLOW}CMaNGOS Database installed to /${_installdir}\n\n"
