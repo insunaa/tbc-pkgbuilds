@@ -60,7 +60,9 @@ package() {
   mv -v "$pkgdir/cmangos/bin/mangosd"* "$pkgdir/$_installdir/wotlkmangos"
   mv -v "$pkgdir/cmangos/bin/warden_modules/"* "$pkgdir/opt/$_pkgbase/warden_modules"
   mv -v "$pkgdir/cmangos/bin/tools/"* "$pkgdir/opt/$_pkgbase/tools"
-  mv -v "$pkgdir/cmangos/etc/"* "$pkgdir/etc/$_pkgbase"
+  cp -v "$srcdir/mangosd.conf"* "$pkgdir/etc/$_pkgbase"
+  cp -v "$srcdir/realmd.conf"* "$pkgdir/etc/$_pkgbase"
+  cp -v "$srcdir/anticheat.conf"* "$pkgdir/etc/$_pkgbase"
   rm -rf "$pkgdir/cmangos"
   _YELLOW='\033[0;33m'
   _NC='\033[0m'
