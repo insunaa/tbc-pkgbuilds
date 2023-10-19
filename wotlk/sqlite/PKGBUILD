@@ -1,0 +1,68 @@
+# Maintainer: insuna <dev.insuna@gmail.com>
+pkgname=cmangos-wotlk-sqlite-git
+_pkgbase=cmangos-wotlk-sqlite
+pkgver=16898.0b7681f78
+pkgrel=1
+pkgdesc="An emulator server for WoW 3.3.5a Clients"
+arch=(x86_64 i686 armv7h aarch64)
+url="https://github.com/cmangos/mangos-wotlk"
+license=('GPL')
+depends=(boost)
+makedepends=(git cmake sqlite boost-libs clang unzip)
+provides=(cmangos-wotlk)
+_installdir="usr/bin"
+backup=("etc/$_pkgbase/mangosd.conf" "etc/$_pkgbase/realmd.conf" "etc/$_pkgbase/anticheat.conf" "usr/share/$_pkgbase/wotlkcharacters.sqlite" "usr/share/$_pkgbase/wotlkrealmd.sqlite" "usr/share/$_pkgbase/wotlklogs.sqlite")
+source=("$_pkgbase-core::git+https://github.com/insunaa/mangos-wotlk.git#branch=sqlite"
+        "https://github.com/cmangos/wotlk-db/releases/download/latest/wotlk-sqlite-db.zip"
+        "mangosd.conf"
+        "realmd.conf"
+        "anticheat.conf")
+sha256sums=('SKIP'
+            'SKIP'
+            '8a84ef81ec36a7f6d6d94b0df6269005145301e7af13fa72647e4011114a7c07'
+            '45141f444574867b00c5dcccd960e491a65bb3afbf71d38d04ef62db53af9e90'
+            'f20a60f7f95f0ef9d40674667dcb0ad205b4f077287d300f9c8dc7124fbee9c7')
+
+pkgver() {
+  cd "$_pkgbase-core"
+  printf "%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "$_pkgbase-core"
+  mkdir -p build
+  cd build
+
+  cmake .. \
+    -DCMAKE_C_COMPILER=/usr/bin/clang \
+    -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+    -DCMAKE_INSTALL_PREFIX="" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_EXTRACTORS=1 \
+    -DSQLITE=1
+  make
+}
+
+package() {
+  mkdir -p "$pkgdir/usr/share/$_pkgbase"
+  mv wotlk-sqlite-db.zip "$pkgdir/usr/share/$_pkgbase"
+  cd "$pkgdir/usr/share/$_pkgbase"
+  unzip wotlk-sqlite-db.zip
+  rm -rf wotlk-sqlite-db.zip
+  cd "$srcdir/$_pkgbase-core/build"
+  make DESTDIR="$pkgdir/cmangos" install
+  cd "$pkgdir"
+  mkdir -p "$pkgdir/$_installdir"
+  mkdir -p "$pkgdir/etc/$_pkgbase"
+  mkdir -p "$pkgdir/opt/$_pkgbase/warden_modules"
+  mkdir -p "$pkgdir/opt/$_pkgbase/tools"
+  mv -v "$pkgdir/cmangos/bin/realmd"* "$pkgdir/$_installdir/wotlkrealmd"
+  mv -v "$pkgdir/cmangos/bin/mangosd"* "$pkgdir/$_installdir/wotlkmangos"
+  mv -v "$pkgdir/cmangos/bin/warden_modules/"* "$pkgdir/opt/$_pkgbase/warden_modules"
+  mv -v "$pkgdir/cmangos/bin/tools/"* "$pkgdir/opt/$_pkgbase/tools"
+  mv -v "$pkgdir/cmangos/etc/"* "$pkgdir/etc/$_pkgbase"
+  rm -rf "$pkgdir/cmangos"
+  _YELLOW='\033[0;33m'
+  _NC='\033[0m'
+  printf "\n${_YELLOW}CMaNGOS Binaries installed to /${_installdir}\nConfig installed to /etc/${_pkgbase}\nDatabase installed to /usr/share/${_pkgbase}\n\nExtractors are in /opt/$_pkgbase/tools. Copy the extracted folders to /opt/$pkg_base\n\n\n"
+}

@@ -1,7 +1,7 @@
 # Maintainer: insuna <dev.insuna@gmail.com>
 pkgname=cmangos-wotlk-git
 _pkgbase=cmangos-wotlk
-pkgver=16195.ebccc6b4d
+pkgver=16685.411996adf
 pkgrel=1
 pkgdesc="An emulator server for WoW 3.3.5a Clients"
 arch=(x86_64 i686 armv7h aarch64)
