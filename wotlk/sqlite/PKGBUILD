@@ -49,6 +49,7 @@ package() {
   cd "$pkgdir/usr/share/$_pkgbase"
   unzip wotlk-sqlite-db.zip
   rm -rf wotlk-sqlite-db.zip
+  chmod 777 *.sqlite
   cd "$srcdir/$_pkgbase-core/build"
   make DESTDIR="$pkgdir/cmangos" install
   cd "$pkgdir"
